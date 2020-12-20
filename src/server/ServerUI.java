@@ -63,29 +63,9 @@ class ServiceThread implements Runnable{
         }
 
         networkUtil.write(NetworkCipher.SUCCESS);
-       // if( cnt == 0) networkUtil.write("No such car with this Registration Number") ;
     }
 
     private void add(Car newCar) throws IOException, ClassNotFoundException {
-       /* networkUtil.write("Registration Number: ");
-        String regNum = (String) networkUtil.read();
-        networkUtil.write("Year Made: ");
-        String yearMade = (String) networkUtil.read();
-        networkUtil.write("Colors[Color1,Color2,Color3]: ");
-        String color1 = (String) networkUtil.read();
-        String color2 = (String) networkUtil.read();
-        String color3 = (String) networkUtil.read();
-        networkUtil.write("Car Make: ");
-        String carMake = (String) networkUtil.read();
-        networkUtil.write("Car Model: ");
-        String carModel = (String) networkUtil.read();
-        networkUtil.write("Price: ");
-        String price = (String) networkUtil.read();
-        networkUtil.write("Quantity: ");
-        String quantity = (String) networkUtil.read();
-
-        Car temp = new Car(regNum,Integer.parseInt(yearMade),new String[]{color1,color2,color3},carMake,carModel,Integer.parseInt(price),Integer.parseInt(quantity));
-       */
         boolean canAdd = true;
         for(Car car: Server.carList)
             if ( newCar.getRegistrationNumber().toLowerCase().equals(car.getRegistrationNumber().toLowerCase()) ) {
