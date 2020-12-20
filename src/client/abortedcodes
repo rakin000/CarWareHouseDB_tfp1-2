@@ -1,0 +1,111 @@
+class ReadThread implements Runnable {
+    private Thread thr;
+    private NetworkUtil networkUtil;
+
+    public ReadThread(NetworkUtil networkUtil) {
+        this.networkUtil = networkUtil;
+        this.thr = new Thread(this);
+        thr.start();
+    }
+
+    public void run() {
+        try {
+            while (true) {
+                String s = (String) networkUtil.read();
+                if (s != null) {
+                    System.out.println("Received: " + s);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+            try {
+                networkUtil.closeConnection();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+
+class WriteThread implements Runnable {
+    private Thread thr;
+    private NetworkUtil networkUtil;
+    String name;
+    Scanner input = new Scanner(System.in);
+
+    public WriteThread(NetworkUtil networkUtil, String name) {
+        this.networkUtil = networkUtil;
+        this.name = name;
+        this.thr = new Thread(this);
+        thr.start();
+    }
+
+    public void run() {
+        try {
+
+            System.out.println("Username: ");
+            String uname = input.nextLine();
+            System.out.println("Password: ");
+            String pass = input.nextLine();
+            networkUtil.write( (new User(uname,pass)).toString() ) ;
+
+
+            while(true){
+                System.out.println("(1) Search Cars\n(2) Add Car\n(3) Delete Car\n(4) Exit System") ;
+
+                int cmd = Integer.parseInt( input.nextLine() );
+
+                if( cmd == 1 ){
+                    System.out.println("Registration Number: ");
+                    String regN = input.nextLine();
+                    networkUtil.write(Command.SEARCH);
+                    networkUtil.write(regN);
+                }
+                else if( cmd == 2 )
+                    networkUtil.write(Command.ADD);
+                else
+                    break;
+
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+            try {
+                networkUtil.closeConnection();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+/*
+
+public class Client extends Applicaition{
+    public static void start(Stage primaryStage){
+
+    }
+
+
+    public static void main(String args[]) {
+        String serverAddress = "127.0.0.1";
+        int serverPort = 420;
+
+        try {
+            NetworkUtil networkUtil = new NetworkUtil(serverAddress, serverPort);
+            new ReadThread(networkUtil);
+            new WriteThread(networkUtil, "Client");
+        } catch(java.net.ConnectException ec){
+            System.out.println(ec);
+            System.out.println("No server found running!!") ;
+        }
+        catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+}
+
+*/

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="500.0" prefWidth="762.0" style="-fx-background-color: black;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <TextField fx:id="carModel" layoutX="240.0" layoutY="59.0" prefHeight="25.0" prefWidth="201.0" />
+      <TextField fx:id="carMake" layoutX="240.0" layoutY="101.0" prefHeight="25.0" prefWidth="201.0" />
+      <Label layoutX="104.0" layoutY="59.0" prefHeight="25.0" prefWidth="94.0" text="Car Model" textFill="WHITE">
+         <font>
+            <Font name="Consolas Bold" size="14.0" />
+         </font></Label>
+      <Label layoutX="104.0" layoutY="101.0" prefHeight="25.0" prefWidth="94.0" text="Car Make" textFill="WHITE">
+         <font>
+            <Font name="Consolas Bold" size="14.0" />
+         </font></Label>
+      <Label layoutX="104.0" layoutY="147.0" text="Year Made" textFill="WHITE">
+         <font>
+            <Font name="Consolas Bold" size="14.0" />
+         </font></Label>
+      <Label layoutX="106.0" layoutY="186.0" prefHeight="25.0" prefWidth="64.0" text="Price" textFill="WHITE">
+         <font>
+            <Font name="Consolas Bold" size="14.0" />
+         </font></Label>
+      <Label layoutX="106.0" layoutY="222.0" prefHeight="33.0" prefWidth="147.0" text="Registration &#10;Number" textFill="WHITE">
+         <font>
+            <Font name="Consolas Bold" size="14.0" />
+         </font></Label>
+      <Label layoutX="104.0" layoutY="279.0" prefHeight="17.0" prefWidth="64.0" text="Colors" textFill="WHITE">
+         <font>
+            <Font name="Consolas Bold" size="14.0" />
+         </font></Label>
+      <Label layoutX="110.0" layoutY="391.0" text="Quantity" textFill="WHITE">
+         <font>
+            <Font name="Consolas Bold" size="14.0" />
+         </font></Label>
+      <Button fx:id="okButton" layoutX="104.0" layoutY="425.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="317.0" style="-fx-background-color: gray;" text="Okay" textFill="WHITE">
+         <font>
+            <Font name="Consolas Bold" size="18.0" />
+         </font></Button>
+      <TextField fx:id="yearMade" layoutX="240.0" layoutY="143.0" prefHeight="25.0" prefWidth="201.0" />
+      <TextField fx:id="price" layoutX="240.0" layoutY="186.0" prefHeight="25.0" prefWidth="201.0" />
+      <TextField fx:id="regNumber" layoutX="240.0" layoutY="226.0" prefHeight="25.0" prefWidth="201.0" />
+      <TextField fx:id="color1" layoutX="240.0" layoutY="275.0" prefHeight="25.0" prefWidth="201.0" />
+      <TextField fx:id="quantity" layoutX="240.0" layoutY="387.0" prefHeight="25.0" prefWidth="201.0" />
+      <TextField fx:id="color2" layoutX="240.0" layoutY="313.0" prefHeight="25.0" prefWidth="201.0" />
+      <TextField fx:id="color3" layoutX="240.0" layoutY="349.0" prefHeight="25.0" prefWidth="201.0" />
+      <Button fx:id="cancelButton" layoutX="493.0" layoutY="425.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="138.0" style="-fx-background-color: Gray;" text="Cancel" textFill="WHITE">
+         <font>
+            <Font name="Consolas Bold" size="18.0" />
+         </font></Button>
+      <ImageView fx:id="carImage" fitHeight="192.0" fitWidth="242.0" layoutX="493.0" layoutY="51.0" pickOnBounds="true" preserveRatio="true" />
+      <Button fx:id="imageChoiceButton" layoutX="579.0" layoutY="263.0" mnemonicParsing="false" text="Choose Image" />
+   </children>
+</AnchorPane>
