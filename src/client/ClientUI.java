@@ -5,15 +5,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 
-import util.NetworkUtil;
-import util.User;
-import util.Command;
-import util.NetworkCipher;
-import util.Car;
+import util.*;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.Scanner;
 
 import javafx.application.Application;
@@ -36,11 +30,15 @@ import javafx.scene.layout.AnchorPane;
 
 import javafx.scene.Group;
 
+import javax.lang.model.element.ModuleElement;
+
 
 class carInput{
     @FXML Button cancelButton,okButton,imageChoiceButton;
     @FXML TextField carMake,carModel,yearMade,regNumber,price,color1,color2,color3,quantity;
-    @FXML ImageView carImage;
+    @FXML ImageView carImageView;
+
+    SerializableImage carImage;
 
     Car car;
     public carInput(Car initial) throws Exception {
@@ -61,6 +59,12 @@ class carInput{
         color2.setText(initial.getColors()[1]);
         color3.setText(initial.getColors()[2]);
         quantity.setText(initial.getQuantity()+"");
+        carImage = initial.getImage();
+        try {
+            carImageView.setImage(carImage.getImage());
+        }catch(Exception e){
+
+        }
 
         cancelButton.setOnAction(e ->{
             car = null;
@@ -77,6 +81,8 @@ class carInput{
                         Integer.parseInt(price.getText()),
                         Integer.parseInt(quantity.getText())
                 );
+
+                car.setImage(carImage);
             }
             catch( Exception error){
                 Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -98,15 +104,12 @@ class carInput{
             public void handle(final ActionEvent e) {
                 final FileChooser fileChooser = new FileChooser();
                 File file = fileChooser.showOpenDialog(carIn);
-              /*  if (file != null) {
-                    openFile(file);
-                }String filepath = file.getPath();
-                 */
                 if( file != null){
                     try{
                         FileInputStream input = new FileInputStream(file.getPath());
                         Image image = new Image(input);
-                        carImage.setImage(image);
+                        carImageView.setImage(image);
+                        carImage = new SerializableImage(image);
                     } catch( Exception ex){
                         Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.setTitle("Error!");
@@ -154,6 +157,7 @@ public class ClientUI extends Application{
     @FXML
     ScrollPane viewScrollPane;
     @FXML TextField regN, carMake, carModel;
+    @FXML Label userLabel;
 
     private AnchorPane carView(Car car){
         VBox textInfo = new VBox(10) ;
@@ -172,7 +176,20 @@ public class ClientUI extends Application{
         AnchorPane cView = new AnchorPane();
         Button edit = new Button("Edit"), buy = new Button("Buy"), del = new Button("Delete");
 
-        cView.getChildren().addAll(textInfo,buy,del,edit);
+        ImageView carImageView = new ImageView();
+        try {
+            carImageView.setImage(car.getImage().getImage());
+        }catch(Exception ex){
+            //no image for this car...
+        }
+
+        cView.getChildren().addAll(carImageView,textInfo,buy,del,edit);
+
+        carImageView.setLayoutX(10.0);
+        carImageView.setLayoutY(10.0);
+        carImageView.setFitHeight(350.0);
+        carImageView.setFitWidth(450.0);
+
         textInfo.setLayoutX(500.0);
         textInfo.setLayoutY(30.0);
         textInfo.setPrefSize(300.0, 300.0);
@@ -256,6 +273,7 @@ public class ClientUI extends Application{
                     networkUtil.write(Command.EDIT);
                     networkUtil.write(car.getRegistrationNumber());
                     networkUtil.write(newCar);
+                    networkUtil.write(newCar.getImage());
 
                     int message = NetworkCipher.FAILED;
                     message = (int) networkUtil.read();
@@ -273,6 +291,8 @@ public class ClientUI extends Application{
                     }
                 } catch(NullPointerException ne){
                     //do nothing
+                } catch( Exception ex){
+                    ex.printStackTrace();
                 }
 
             } catch(Exception ex){
@@ -308,8 +328,6 @@ public class ClientUI extends Application{
             System.out.println(e);
             System.exit(-1);
         }
-
-        // new ReadThread(networkUtil);
 
         try{
             FXMLLoader loginfxml = new FXMLLoader(getClass().getResource("login_client.fxml") );
@@ -367,7 +385,8 @@ public class ClientUI extends Application{
                     failed.setContentText("Please enter correct user info.");
                     failed.showAndWait();
                 }
-                else{ // success
+                else{
+                    // success
                     //  Stage window = (Stage) ((Node) e.getSource()).getScene().getWindow() ;
                     // window.setScene(menu);
                     // window.show();
@@ -376,6 +395,15 @@ public class ClientUI extends Application{
                         addButton.setDisable(true);
                     else
                         addButton.setDisable(false);
+
+                    String uLabel = uname;
+                    if( userType == User.VIEWER)
+                            uLabel += " (viewer)" ;
+                    else if( userType == User.MANUFACTURER)
+                            uLabel += " (manufacturer)";
+                    else uLabel += " (admin)" ;
+
+                    userLabel.setText(uLabel);
 
                     viewScrollPane.setContent(new VBox());
                     myStage.setScene(menu);
@@ -395,6 +423,7 @@ public class ClientUI extends Application{
                         Car car = adder.getCar();
                         networkUtil.write(Command.ADD);
                         networkUtil.write(car);
+                        networkUtil.write(car.getImage());
 
                         int message = NetworkCipher.FAILED;
                         message = (int) networkUtil.read();
@@ -444,10 +473,13 @@ public class ClientUI extends Application{
                 try{
                     while(true){
                         Object car = (Object) networkUtil.read();
-                        if( car instanceof Car)
+                        if( car instanceof Car) {
                             // viewScrollPane.getChildren().add(carView((Car) car)) ;
                             // viewScrollPane.setContent(carView((Car) car));
+                            SerializableImage carImg = (SerializableImage) networkUtil.read();
+                            ((Car) car).setImage(carImg);
                             cars.getChildren().add(carView((Car) car));
+                        }
                         else break;
                     }
 
@@ -482,10 +514,14 @@ public class ClientUI extends Application{
                 try{
                     while(true){
                         Object car = (Object) networkUtil.read();
-                        if( car instanceof Car)
+                        if( car instanceof Car) {
                             // viewScrollPane.getChildren().add(carView((Car) car)) ;
                             // viewScrollPane.setContent(carView((Car) car));
+                            SerializableImage carImg = (SerializableImage) networkUtil.read();
+                            ((Car) car).setImage(carImg);
                             cars.getChildren().add(carView((Car) car));
+                            //cars.getChildren().add(carView((Car) car));
+                        }
                         else break;
                     }
 

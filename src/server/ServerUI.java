@@ -1,18 +1,15 @@
 package server;
 
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.util.Scanner;
 
-import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import javafx.scene.image.Image;
 import javafx.stage.WindowEvent;
 import util.*;
 
@@ -58,6 +55,7 @@ class ServiceThread implements Runnable{
                     (carModel.toLowerCase().equals("") || car.getCarModel().toLowerCase().equals(carModel.toLowerCase()))
             ){
                 networkUtil.write(car);
+                networkUtil.write(car.getImage()); ///
                 cnt += 1;
             }
         }
@@ -65,7 +63,7 @@ class ServiceThread implements Runnable{
         networkUtil.write(NetworkCipher.SUCCESS);
     }
 
-    private void add(Car newCar) throws IOException, ClassNotFoundException {
+    private synchronized void add(Car newCar) throws IOException, ClassNotFoundException {
         boolean canAdd = true;
         for(Car car: Server.carList)
             if ( newCar.getRegistrationNumber().toLowerCase().equals(car.getRegistrationNumber().toLowerCase()) ) {
@@ -82,7 +80,7 @@ class ServiceThread implements Runnable{
         }
     }
 
-    private void buy(String regN) throws IOException, ClassNotFoundException{
+    private synchronized void buy(String regN) throws IOException, ClassNotFoundException{
         int searchIndex = -1;
 
         for (int i = 0; i < Server.carList.size(); i++) {
@@ -107,7 +105,7 @@ class ServiceThread implements Runnable{
 
     }
 
-    private void delete(String regN) throws IOException, ClassNotFoundException {
+    private synchronized void delete(String regN) throws IOException, ClassNotFoundException {
         int searchIndex = -1;
 
         for (int i = 0; i < Server.carList.size(); i++) {
@@ -117,21 +115,23 @@ class ServiceThread implements Runnable{
                 break;
             }
         }
-        if (searchIndex != -1){
-           /* System.out.println("Deleted : ") ;
-            System.out.println(carList.get(searchIndex));
-
-            */
+        if (searchIndex != -1) {
             networkUtil.write(NetworkCipher.SUCCESS);
+            try {
+                String fpath = "\\src\\server\\images\\" + Server.carList.get(searchIndex).getRegistrationNumber() + ".img";
+                File img = new File(fpath);
+                img.delete();
+            } catch (Exception e) {
+                System.out.println("Failed to delete!!!\n"+ e);
+            }
             Server.carList.remove(searchIndex);
         }
         else {
-          //  System.out.println("No such car with Registration Number" + regN ) ;
             networkUtil.write(NetworkCipher.FAILED);
         }
     }
 
-    private void modify(String regN, Car newCar) throws IOException, ClassNotFoundException {
+    private synchronized void modify(String regN, Car newCar) throws IOException, ClassNotFoundException {
         int searchIndex = -1;
 
         for (int i = 0; i < Server.carList.size(); i++) {
@@ -170,18 +170,14 @@ class ServiceThread implements Runnable{
     public void run() {
         try {
             while (true) {
-             //   String temp[] = ((String) networkUtil.read()).split(",",2);
-              //  User user = new User(temp[0],temp[1]);
                 User user = (User) networkUtil.read();
 
                 if (user.username == null && user.password == null){
-                    // networkUtil.write("Username and password don't match or not registered!!") ;
                     networkUtil.write(NetworkCipher.FAILED) ;
                     continue;
                 }
                 int uType = checkUser(user);
                 if( uType == -1 ){
-                    // networkUtil.write("Username and password don't match or not registered!!") ;
                     networkUtil.write(NetworkCipher.FAILED);
                     continue;
                 }
@@ -195,6 +191,7 @@ class ServiceThread implements Runnable{
 
                     if( command == Command.ADD) {
                         Car car = (Car) networkUtil.read();
+                        SerializableImage img = (SerializableImage) networkUtil.read();
                         add(car);
                     }
                     else if( command == Command.BUY) {
@@ -217,6 +214,7 @@ class ServiceThread implements Runnable{
                     else if(command == Command.EDIT) {
                         String regN = (String) networkUtil.read();
                         Car car = (Car) networkUtil.read();
+                        SerializableImage img = (SerializableImage) networkUtil.read();
                         modify(regN, car);
                     };
                 }
@@ -288,7 +286,17 @@ class Server implements Runnable {
 
                 String attr[] = line.split(",") ;
 
-                carList.add(new Car(attr[0], Integer.parseInt(attr[1]), new String[]{attr[2],attr[3],attr[4]}, attr[5], attr[6], Integer.parseInt(attr[7]), Integer.parseInt(attr[8]) ) ) ;
+                Car t = new Car(attr[0], Integer.parseInt(attr[1]), new String[]{attr[2],attr[3],attr[4]}, attr[5], attr[6], Integer.parseInt(attr[7]), Integer.parseInt(attr[8]) ) ;
+                String imgPath = "src\\server\\images\\" + t.getRegistrationNumber() + ".img";
+                try {
+                    FileInputStream input = new FileInputStream(imgPath);
+                    Image image = new Image(input);
+                    t.setImage(new SerializableImage(image));
+                }catch(Exception e) {
+                    System.out.println(e+"\n"+"No image file found!!" + " " + imgPath);
+                }
+
+                Server.carList.add(t);
             }
             br.close();
         }
@@ -318,6 +326,15 @@ class Server implements Runnable {
             for(Car car: carList){
                 bw.write(car.formatW()) ;
                 bw.write("\n");
+
+
+                String imgPath = "src\\server\\images\\"+car.getRegistrationNumber()+".img";
+                try{
+                    car.getImage().saveImage(imgPath);
+                } catch(Exception e){
+                    System.out.println(e);
+                    System.out.println("couldn't write image!!"+" "+car.getRegistrationNumber());
+                }
             }
             bw.close();
         } catch (Exception e) {
@@ -336,7 +353,6 @@ class Server implements Runnable {
             serverSocket = new ServerSocket(420);
             while(serverRunning == true){
                 Socket clientSocket = serverSocket.accept();
-                // message.getChildren().add(new Text("New Connection : " + clientSocket.toString())) ;
                 message.append("New Connection: "+ clientSocket.toString() );
                 NetworkUtil netu = new NetworkUtil(clientSocket);
                 new ServiceThread(netu);
@@ -366,7 +382,6 @@ public class ServerUI extends Application {
 
             Scene scene = new Scene(loader.load());
             textFlow.getChildren().add(new Text("Server started......\n\n"));
-            //Server.message = textFlow;
 
             Timeline fiveSecondsWonder = new Timeline(
                     new KeyFrame(Duration.seconds(5),
@@ -374,7 +389,6 @@ public class ServerUI extends Application {
 
                                 @Override
                                 public void handle(ActionEvent event) {
-                                    //System.out.println("this is called every 5 seconds on UI thread");
                                     if( Server.message.length() != 0 )
                                         textFlow.getChildren().add(new Text(Server.message.toString()+"\n"));
                                     Server.message = new StringBuilder();

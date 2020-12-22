@@ -9,8 +9,9 @@ public class Car implements Serializable {
     private String carMake, carModel;
     private int price;
     private int quantity;
+    private SerializableImage image;
 
-    public Car(String regNumber, int yearMade, String[] color, String carMake, String carModel, int price, int quantity ){
+    public Car(String regNumber, int yearMade, String[] color, String carMake, String carModel, int price, int quantity){
         this.regNumber = regNumber;
         this.yearMade = yearMade;
         this.color = new String[3] ;
@@ -27,6 +28,11 @@ public class Car implements Serializable {
         this("",0,new String[]{"","",""},"","",0,0);
     }
 
+
+    public void setImage(SerializableImage image){
+        this.image = image;
+    }
+
     public String getRegistrationNumber()   {   return regNumber;   }
     public int getYearMade()                {   return yearMade;    }
     public String[] getColors()             {   return color;     }
@@ -34,6 +40,7 @@ public class Car implements Serializable {
     public String getCarModel()             {   return carModel;    }
     public int getPrice()                   {   return price;       }
     public int getQuantity()                {   return quantity;    }
+    public SerializableImage getImage()     {   return image;       }
 
     public void buy(){
         if( quantity > 0 )

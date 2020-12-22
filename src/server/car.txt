@@ -1,9 +1,8 @@
 1YX98J,2014,Black,White,,Toyota,RAV4,25000,12
-ABC132,2007,Yellow,,,Toyota,Corolla,5900,1
+ABC132,2007,Yellow,Cyan,,Toyota,Corolla,5900,1
 MARY,2017,Dark Grey,Blue,Red,BMW,116d,55132,24
 38000,2012,Blue,Light Green,,Honda,Civic,9200,4
-DJONT,2002,Dark Blue,Cyan,,BMW,StevieT,20010202,35
-Djent,2012,yellow,cyan,,bmw,trex,24134,39
-djjant,2014,yellow,,,trex,toata,1242341,10
-AVC5115151,2014,Blue,Black,Yellow,Lamborghini,Avantador S Roadster,414544,9
-1853234SB,2000,Black,Blue,,Bugatti Veyron,Super Sports,214324,4
+AVC5115151,2014,Blue,Black,Yellow,Lamborghini,Avantador S Roadster,414544,8
+BVSS,2000,Black,Blue,,Bugatti Veyron,Super Sports,214324,52
+CJR1,2015,Black,Red,Brown,Chevrolette,Corvette JR1,531345,18
+MSGT500,2020,Black,,,Ford,Mustang Shelby GT500,1541234,31

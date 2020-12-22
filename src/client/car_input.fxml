@@ -54,7 +54,7 @@
          <font>
             <Font name="Consolas Bold" size="18.0" />
          </font></Button>
-      <ImageView fx:id="carImage" fitHeight="192.0" fitWidth="242.0" layoutX="493.0" layoutY="51.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="carImageView" fitHeight="192.0" fitWidth="242.0" layoutX="493.0" layoutY="51.0" pickOnBounds="true" preserveRatio="true" />
       <Button fx:id="imageChoiceButton" layoutX="579.0" layoutY="263.0" mnemonicParsing="false" text="Choose Image" />
    </children>
 </AnchorPane>

@@ -2,7 +2,6 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
@@ -30,15 +29,6 @@
          <font>
             <Font name="Consolas" size="14.0" />
          </font></Button>
-        <CheckBox fx:id="cBox_regN" layoutX="199.0" layoutY="14.0" mnemonicParsing="false" text="Registration Number" textFill="WHITE">
-         <font>
-            <Font name="Consolas" size="12.0" />
-         </font></CheckBox>
-        <CheckBox fx:id="cBox_carMake" layoutX="199.0" layoutY="43.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="147.0" text="Make" textFill="WHITE">
-         <font>
-            <Font name="Consolas" size="12.0" />
-         </font></CheckBox>
-        <CheckBox fx:id="cBox_carModel" layoutX="199.0" layoutY="77.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="94.0" text="Model" textFill="WHITE" />
       <Button fx:id="addButton" layoutX="173.0" layoutY="113.0" mnemonicParsing="false" prefHeight="36.0" prefWidth="147.0" style="-fx-background-color: #524d42;" text="Add" textFill="WHITE">
          <font>
             <Font name="Consolas" size="14.0" />
@@ -48,5 +38,12 @@
             <Font name="Consolas" size="14.0" />
          </font>
       </Label>
+      <Label layoutX="201.0" layoutY="14.0" text="Registration Number" textFill="WHITE">
+         <font>
+            <Font name="Consolas" size="12.0" />
+         </font>
+      </Label>
+      <Label layoutX="201.0" layoutY="48.0" text="Car Make" textFill="WHITE" />
+      <Label layoutX="201.0" layoutY="77.0" text="Car Model" textFill="WHITE" />
     </children>
 </AnchorPane>
